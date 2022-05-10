@@ -68,12 +68,6 @@ Item {
                     }
                 list_of_wd.push(dict)
             }
-            
-            /*
-            for(var i = 0; i < list_of_wd.length; i++) {
-                console.log(list_of_wd[i]["idx"] + ": " + list_of_wd[i]["name"])
-            }
-            */
 
             days_setter.create_days(list_of_wd)
         }

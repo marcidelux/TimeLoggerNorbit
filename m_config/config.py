@@ -1,20 +1,23 @@
 import os
 import json
 from datetime import datetime
+from calendar import monthrange
 from PyQt6.QtCore import QObject
 from PyQt6.QtCore import pyqtProperty
+from PyQt6.QtCore import pyqtSlot
 
 CONFIG_FILE_NAME_PATH = "./m_config/user.json"
 NWD_FILE_NAME_PATH = "./m_config/{}_wds.json"
 
 class Config(QObject):
-    _init_done = False
-
     def __init__(self) -> None:
-        if Config._init_done:
-            return
+        print("Config init called")
         super().__init__(parent=None)
         self.now = datetime.now()
+        #self.now = datetime(year=2022, month=2, day=1)
+        self.num_of_days = monthrange(self.now.year, self.now.month)[1]
+        print(self.now)
+        print(self.num_of_days)
         self._first_name = ""
         self._last_name = ""
         self._role = ""
@@ -56,11 +59,6 @@ class Config(QObject):
         self._role = value
         print(self._role)
 
-    def __new__(cls):
-        if not hasattr(cls, '_instance'):
-            cls._instance = super(Config, cls).__new__(cls)
-        return cls._instance
-
     def load_non_working_days(self):
         with open(NWD_FILE_NAME_PATH.format(self.now.year)) as f:
             data = json.load(f)
@@ -82,5 +80,20 @@ class Config(QObject):
             self._last_name = data["user"]["last_name"]
             self._role = data["user"]["role"]
             self.mail = data["mail"]
+
+    @pyqtSlot()
+    def save_user_data(self):
+        print("Save userdata")
+        data = None
+        with open(CONFIG_FILE_NAME_PATH) as f:
+            data = json.load(f)
+        
+        data["user"]["first_name"] = self._first_name
+        data["user"]["last_name"] = self._last_name
+        data["user"]["role"] = self._role
+
+        with open(CONFIG_FILE_NAME_PATH, "w") as f:
+            json.dump(data, f, indent=4, sort_keys=True)
+
 
 conf = Config()

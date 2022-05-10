@@ -1,0 +1,13 @@
+{
+    "user": {
+        "first_name": "Marton",
+        "last_name": "Lorinczi",
+        "role": "Programmer"
+    },
+
+    "mail" : {
+        "user_email": "marton.lorinczi@norbit.com",
+        "user_pass": "asdasdasd",
+        "to_email": "tibor.kelemen@norbit.com"
+    }
+}

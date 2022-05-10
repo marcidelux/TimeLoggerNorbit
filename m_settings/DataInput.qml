@@ -1,6 +1,6 @@
 
-import QtQuick 6.0
-import QtQuick.Controls 6.0
+import QtQuick 6.2
+import QtQuick.Controls 6.2
     
 Item {
     id: data_input
@@ -26,7 +26,7 @@ Item {
             border.color: "gray"
             border.width: 2
             color: "transparent"
-
+            
             Text {
                 id: fieldName
                 anchors.centerIn: parent

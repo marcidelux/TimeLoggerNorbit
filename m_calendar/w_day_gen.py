@@ -24,14 +24,12 @@ class WorkingDayGenerator(QObject):
         super().__init__(parent=None)
         self.working_days = []
         self.non_working_days = []
-        self.num_of_days = monthrange(conf.now.year, conf.now.month)[1]
-        self.holidays = []
         self.wds_days_path = f"{conf.now.year}_wds.json"
 
     # This function is based on the non working days list
     # so that has to be called before this.
     def create_wds(self) -> list:
-        for i in range(self.num_of_days):
+        for i in range(conf.num_of_days):
             day = i + 1
             if day not in self.non_working_days:
                 name = day_names[datetime(conf.now.year, conf.now.month, day).weekday()]
@@ -41,19 +39,19 @@ class WorkingDayGenerator(QObject):
     # Load extra days shoudl be called before this.
     def create_nwds(self):
         self.non_working_days = []
-        for i in range(self.num_of_days):
+        for i in range(conf.num_of_days):
             day = i + 1
             temp_date = date(conf.now.year, conf.now.month, day)
             weekday = temp_date.weekday()
             # Check if the day is a weekend and not in working saturdays list.
-            # Or if the day in the holidays.
-            if ((weekday == 5 or weekday == 6) and day not in conf.working_saturdays) or day in self.holidays:
+            # Or if the day in theconf holidays.
+            if ((weekday == 5 or weekday == 6) and day not in conf.working_saturdays) or day in conf.holidays:
                 self.non_working_days.append(day)
     
     def create_days_for_doc(self) -> list:
         res = []
         for nwd in self.non_working_days:
-            if nwd in self.holidays:
+            if nwd in conf.holidays:
                 res.append({"idx": nwd, "status": 10})
             else:
                 res.append({"idx": nwd, "status": 11})
@@ -74,7 +72,7 @@ def test():
     wdg = WorkingDayGenerator()
     wdg.setup()
     print(wdg.non_working_days)
-    print(wdg.holidays)
+    print(conf.holidays)
     for wd in wdg.working_days:
         print(wd)
 

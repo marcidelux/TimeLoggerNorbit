@@ -12,7 +12,7 @@ def main():
     print("Starting app")
 
     wdg = WorkingDayGenerator()
-    tdg = TimeDocGenerator(f_name="Marton", l_name="Lorinczi", job_title="Programmer")
+    tdg = TimeDocGenerator()
 
     # Loads all necesary information.
     wdg.setup()
