@@ -4,7 +4,7 @@ import QtQuick.Controls 6.2
     
 Item {
     id: data_input
-    width: 380
+    width: 400
     height: 40
     property alias input_name: fieldName.text
     property alias input_value: fieldValue.text
@@ -13,7 +13,7 @@ Item {
     Rectangle {
         id: container
         anchors.fill: parent
-        color: "transparent"
+        color: "black"
         border.color: "gray"
         border.width: 2
 
