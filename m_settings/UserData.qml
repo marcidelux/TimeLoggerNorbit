@@ -2,7 +2,7 @@ import QtQuick 6.0
 import QtQuick.Controls 6.0
 
 Item {
-    width: 380
+    width: 400
     height: 128
     Rectangle {
         id: contrect
