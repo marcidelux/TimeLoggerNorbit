@@ -1,6 +1,3 @@
-import os
-import shutil
-
 from openpyxl import load_workbook
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
@@ -8,9 +5,13 @@ from openpyxl.styles.colors import Color
 from PyQt6 import QtCore
 from PyQt6.QtCore import pyqtSlot, QObject
 from datetime import datetime
-from zipfile import ZipFile
 
-from m_config.config import conf
+from m_config.config import (
+    conf,
+    TIMELOG_SOURCE_PATH,
+    EXPENSES_SOURCE_PATH,
+)
+from m_folder_handler.folder_handler import FolderHandler
 
 
 DATE_CELL = "F2"
@@ -37,18 +38,15 @@ temp_dir_name = ""
 
 
 class TimeDocGenerator(QObject):
-    def __init__(self, path: str = "time_template.xlsx", parent=None) -> None:
+    def __init__(self, parent=None) -> None:
 
         super().__init__(parent=parent)
-        self.path = path
         self.wb = Workbook()
         self.ws = None
 
     def load(self, path: str = None):
-        self.path = path or self.path
-
         try:
-            self.wb = load_workbook(self.path)
+            self.wb = load_workbook(TIMELOG_SOURCE_PATH)
         except FileNotFoundError as e:
             print("Error: ", e)
             return
@@ -125,26 +123,17 @@ class TimeDocGenerator(QObject):
         self.delete_extra_days()
         self.set_user_data()  # Todo move this to the end.
 
-    @QtCore.pyqtSlot()
-    def save(self):
-        dir_name = (
-            f"{conf._first_name}_{conf._last_name}_{conf.now.year}_{conf.now.month:02d}"
-        )
-        if os.path.isdir(dir_name):
-            shutil.rmtree(dir_name)
-        os.mkdir(dir_name)
-        name = "{}/Jelenléti-{}_{}_{}.xlsx".format(
-            dir_name, conf.now.strftime("%b").lower(), conf.now.year, conf._last_name
-        )
-        self.set_user_data()
-        self.wb.save(name)
-        temp_dir_name = dir_name
-
     @QtCore.pyqtSlot(list)
     def update_days(self, days: list):
         for day in days:
             print(day)
         self.set_days(days)
+
+    @QtCore.pyqtSlot()
+    def save(self):
+        FolderHandler.clear_create()
+        self.set_user_data()
+        self.wb.save(conf.get_timelog_path())
 
 
 class ExpensesDocGenerator(QObject):
@@ -166,19 +155,16 @@ class ExpensesDocGenerator(QObject):
     exp_curr_c = "K"
     exp_exc_rate_c = "M"
 
-    def __init__(self, path: str = "expenses_template.xlsx", parent=None) -> None:
+    def __init__(self, parent=None) -> None:
 
         super().__init__(parent=parent)
-        self.path = path
         self.wb = Workbook()
         self.ws = None
         self.files_to_copy = []
 
-    def load(self, path: str = None):
-        self.path = path or self.path
-
+    def load(self):
         try:
-            self.wb = load_workbook(self.path)
+            self.wb = load_workbook(EXPENSES_SOURCE_PATH)
         except FileNotFoundError as e:
             print("Error: ", e)
             return
@@ -196,35 +182,6 @@ class ExpensesDocGenerator(QObject):
         self.ws[self.to_cell] = datetime(
             conf.now.year, conf.now.month, conf.num_of_days
         ).strftime("%Y-%m-%d")
-
-    def make_zip(self, dirname):
-        with ZipFile(f"{dirname}.zip", "w") as zipObj:
-            # Iterate over all the files in directory
-            for folderName, subfolders, filenames in os.walk(dirname):
-                print(filenames)
-                for filename in filenames:
-                    # create complete filepath of file in directory
-                    filePath = os.path.join(folderName, filename)
-                    # Add file to zip
-                    zipObj.write(filePath, os.path.basename(filePath))
-        print("Zip created")
-
-    @pyqtSlot()
-    def save(self):
-        dir_name = (
-            f"{conf._first_name}_{conf._last_name}_{conf.now.year}_{conf.now.month:02d}"
-        )
-        if len(self.files_to_copy):
-            self.set_user_data()
-            name = "{}/declaration_of_costs-{}.xlsx".format(
-                dir_name, conf.now.strftime("%b_%Y")
-            )
-            self.wb.save(name)
-
-            for fts in self.files_to_copy:
-                shutil.copy(fts["path"], dir_name + "/" + fts["name"])
-
-        self.make_zip(dir_name)
 
     # Loads the Excel templte, sets the user data.
     def setup(self):
@@ -253,7 +210,6 @@ class ExpensesDocGenerator(QObject):
         for idx, exp in enumerate(expenses):
 
             # Copy the selected file
-            self.copy_file(exp[6])
             self.ws[self.exp_date_c + str(self.exp_start_r + idx)] = exp[0]
             self.ws[self.exp_desc_c + str(self.exp_start_r + idx)] = exp[1]
             self.ws[exp_type_table[exp[2]] + str(self.exp_start_r + idx)] = exp[4]
@@ -267,10 +223,14 @@ class ExpensesDocGenerator(QObject):
 
             self.files_to_copy.append(fts)
 
-    def copy_file(self, path: str):
-        # Copy the given file to the temp directory
-        pass
-
+    @pyqtSlot()
+    def save(self):
+        if len(self.files_to_copy):
+            self.set_user_data()
+            self.wb.save(conf.get_expense_path())
+            FolderHandler.copy_expenses(self.files_to_copy)
+        FolderHandler.make_zip()
+        FolderHandler.delete_result_folder()
 
 def test():
     expenses = ExpensesDocGenerator()

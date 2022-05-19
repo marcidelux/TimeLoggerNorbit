@@ -72,7 +72,7 @@ ApplicationWindow {
 
     
     Image {
-        source: "norlogoi.png"
+        source: CONF.logo_path
         anchors.bottom: parent.bottom
         anchors.right: parent.right
     }
