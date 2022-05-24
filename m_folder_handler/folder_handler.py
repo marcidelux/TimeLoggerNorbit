@@ -2,12 +2,15 @@ import os
 
 import shutil
 
-from m_config.config import conf
+from m_config.config import conf, DATA_RESULTS_PATH
 
 
 class FolderHandler:
     @staticmethod
     def clear_create():
+        if not os.path.isdir(DATA_RESULTS_PATH):
+            os.mkdir(DATA_RESULTS_PATH)
+
         temp_dir = conf.get_results_path()
         if os.path.isdir(temp_dir):
             shutil.rmtree(temp_dir)
