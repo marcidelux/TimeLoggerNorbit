@@ -16,6 +16,7 @@ day_names = {
     6: "Vasárnap",
 }
 
+
 class WorkingDayGenerator(QObject):
 
     signal_working_days = pyqtSignal(list)
@@ -34,7 +35,7 @@ class WorkingDayGenerator(QObject):
             if day not in self.non_working_days:
                 name = day_names[datetime(conf.now.year, conf.now.month, day).weekday()]
                 self.working_days.append({"idx": day, "name": name})
-    
+
     # Create a list of non working days, it contains only the date index of teh day.
     # Load extra days shoudl be called before this.
     def create_nwds(self):
@@ -45,9 +46,11 @@ class WorkingDayGenerator(QObject):
             weekday = temp_date.weekday()
             # Check if the day is a weekend and not in working saturdays list.
             # Or if the day in theconf holidays.
-            if ((weekday == 5 or weekday == 6) and day not in conf.working_saturdays) or day in conf.holidays:
+            if (
+                (weekday == 5 or weekday == 6) and day not in conf.working_saturdays
+            ) or day in conf.holidays:
                 self.non_working_days.append(day)
-    
+
     def create_days_for_doc(self) -> list:
         res = []
         for nwd in self.non_working_days:
@@ -56,7 +59,7 @@ class WorkingDayGenerator(QObject):
             else:
                 res.append({"idx": nwd, "status": 11})
         return res
-    
+
     def send_working_days(self):
         send_list = []
         for wd in self.working_days:
@@ -67,6 +70,7 @@ class WorkingDayGenerator(QObject):
     def setup(self):
         self.create_nwds()
         self.create_wds()
+
 
 def test():
     wdg = WorkingDayGenerator()

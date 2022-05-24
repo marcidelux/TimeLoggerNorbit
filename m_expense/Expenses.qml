@@ -22,9 +22,14 @@ Item {
     }
 
     function get_expense_data() {
-        expSetter.allData = []
-        expSetter.cntr = 0
-        expSetter.get_expense_data_signal()
+        if(expModel.count) {
+            expSetter.allData = []
+            expSetter.cntr = 0
+            expSetter.get_expense_data_signal()
+        } else {
+            console.log("Exp modell is empty")
+            EXP.get_expenses_slot(expSetter.allData)
+        }
     }
 
     function get_all_finished() {
@@ -55,7 +60,7 @@ Item {
     Rectangle {
         id: contRect
         width: 700
-        height: 260
+        height: 460
         border.width: 2
         border.color: "gray"
         color: "transparent"
@@ -70,9 +75,10 @@ Item {
 
         ListView {id: lvExp;
             width: 700
-            height: 200
+            height: 400
             anchors.left: parent.left
             anchors.top: r6.bottom
+            anchors.topMargin: 6
             model: expModel
             spacing: 4
 
@@ -102,6 +108,8 @@ Item {
                 }
             }
         }
+        
+        Rectangle { id: shadow_box_bt; color: "black"; width: 44; height: 36; anchors.left: btAdd.left; anchors.bottom: btAdd.bottom; anchors.bottomMargin: 2}
 
         Rectangle { id: r1; color: "black"; border.color: "gray"; border.width: 2; width: 40; height: 40;
             anchors.top: parent.top; anchors.left: parent.left
@@ -129,7 +137,7 @@ Item {
         }
         Rectangle { id: r7; color: "black"; border.color: "gray"; border.width: 2; width: 100; height: 40;
             anchors.top: parent.top; anchors.left: r6.right
-            Text{anchors.centerIn: parent; color: "white"; text: "File Path"}
+            Text{anchors.centerIn: parent; color: "white"; text: "Invoice Path"}
         }
         Button { width: 44; height: 40;
             id: btAdd
@@ -142,6 +150,9 @@ Item {
             }
         }
 
+        Rectangle { id: shadow_box; color: "black"; width: 700; height: 40;
+            anchors.top: lvExp.bottom; anchors.left: lvExp.left; anchors.topMargin: 14
+        }
     }
 
 

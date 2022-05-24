@@ -40,8 +40,6 @@ Item {
 
         delegate: DaySetter {
             id: ds_del
-            width: parent.width
-            height: 40
             date_idx: m_date_idx
             day_name: m_day_name
             status: model.m_status

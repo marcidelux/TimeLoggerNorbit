@@ -3,7 +3,7 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 from openpyxl.styles.colors import Color
 from PyQt6 import QtCore
-from PyQt6.QtCore import pyqtSlot, QObject
+from PyQt6.QtCore import pyqtSlot, QObject, pyqtSignal
 from datetime import datetime
 
 from m_config.config import (
@@ -38,8 +38,9 @@ temp_dir_name = ""
 
 
 class TimeDocGenerator(QObject):
-    def __init__(self, parent=None) -> None:
+    data_updated_signal = pyqtSignal()
 
+    def __init__(self, parent=None) -> None:
         super().__init__(parent=parent)
         self.wb = Workbook()
         self.ws = None
@@ -106,8 +107,7 @@ class TimeDocGenerator(QObject):
             value = day_status[status_idx]["value"]
             self.ws[status_cell] = value
 
-            if day["idx"] == 2:
-                print("Set Day2")
+        self.data_updated_signal.emit()
 
     def del_data_and_color_row(self, row):
         my_gray = Color(rgb="00808080")
@@ -125,9 +125,13 @@ class TimeDocGenerator(QObject):
 
     @QtCore.pyqtSlot(list)
     def update_days(self, days: list):
-        for day in days:
-            print(day)
         self.set_days(days)
+
+    @QtCore.pyqtSlot()
+    def save(self):
+        FolderHandler.clear_create()
+        self.set_user_data()
+        self.wb.save(conf.get_timelog_path())
 
     @QtCore.pyqtSlot()
     def save(self):
@@ -137,6 +141,8 @@ class TimeDocGenerator(QObject):
 
 
 class ExpensesDocGenerator(QObject):
+    ready_to_save_signal = pyqtSignal()
+    saved_signal = pyqtSignal()
     purpose_cell = "C3"
     name_cell = "C6"
     position_cell = "F6"
@@ -215,6 +221,26 @@ class ExpensesDocGenerator(QObject):
             self.ws[exp_type_table[exp[2]] + str(self.exp_start_r + idx)] = exp[4]
             self.ws[self.exp_curr_c + str(self.exp_start_r + idx)] = exp[3]
             self.ws[self.exp_exc_rate_c + str(self.exp_start_r + idx)] = exp[5]
+
+            fts = {
+                "path": exp[6].split("//")[1],
+                "name": f"expense_[{idx + 1}]_{conf.now.month:02d}-{int(exp[0]):02d}_{exp[2]}.{exp[6].split('.')[1]}",
+            }
+
+            self.files_to_copy.append(fts)
+
+        self.ready_to_save_signal.emit()
+
+    @pyqtSlot(bool)
+    def save(self, del_res: bool):
+        if len(self.files_to_copy):
+            self.set_user_data()
+            self.wb.save(conf.get_expense_path())
+            FolderHandler.copy_expenses(self.files_to_copy)
+        FolderHandler.make_zip()
+        if del_res:
+            FolderHandler.delete_result_folder()
+        self.saved_signal.emit()
 
             fts = {
                 "path": exp[6].split("//")[1],
