@@ -242,12 +242,12 @@ class ExpensesDocGenerator(QObject):
             FolderHandler.delete_result_folder()
         self.saved_signal.emit()
 
-            fts = {
-                "path": exp[6].split("//")[1],
-                "name": f"expense_[{idx + 1}]_{conf.now.month:02d}-{int(exp[0]):02d}_{exp[2]}.{exp[6].split('.')[1]}",
-            }
+        fts = {
+            "path": exp[6].split("//")[1],
+            "name": f"expense_[{idx + 1}]_{conf.now.month:02d}-{int(exp[0]):02d}_{exp[2]}.{exp[6].split('.')[1]}",
+        }
 
-            self.files_to_copy.append(fts)
+        self.files_to_copy.append(fts)
 
     @pyqtSlot()
     def save(self):
