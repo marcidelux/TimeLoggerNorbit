@@ -199,10 +199,15 @@ Item {
 
     FileDialog {
         id: expFileDialog
+        nameFilters: [ "Invoice (*.pdg *.jpg *.png)", "All files (*)" ]
         onAccepted: {
             console.log(expFileDialog.selectedFile)
             selectedPath = expFileDialog.selectedFile.toString()
-            fileText.text = expFileDialog.selectedFile.toString().replace(/^.*[\\\/]/, '')
+            var filename = expFileDialog.selectedFile.toString().replace(/^.*[\\\/]/, '')
+            if (filename.length > 10) {
+                filename = "..." + filename.substring(filename.length - 10)
+            }
+            fileText.text = filename
         }
     }
 

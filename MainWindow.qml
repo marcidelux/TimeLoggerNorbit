@@ -8,11 +8,13 @@ import "m_expense"
 ApplicationWindow {
     id: mainWindow
     visible: true
-    title: "NORBIT HUN TIME LOGGER"
+    title: "NORBIT HUN TIME LOGGER V1.0"
     height: 595
     width: 1130
-    x: 200
-    y: 200
+    maximumHeight: height
+    maximumWidth: width
+    minimumHeight: height
+    minimumWidth: width
     Universal.theme: Universal.Dark
     Universal.accent: Universal.Violet
 
@@ -41,39 +43,88 @@ ApplicationWindow {
     }
 
     Button {
-        id: btUpdate
+        id: btSave
         anchors.bottom: parent.bottom
         anchors.left: daySetter.right
         anchors.leftMargin: 10
-        width: 100
-        height: 100
-        text: "UPDATE"
-        onClicked: {
-            daySetter.send_setted_days()
-            expenses.get_expense_data()
-        }
-    }
-
-    Button {
-        id: btSave
-        anchors.top: btUpdate.top
-        anchors.left: btUpdate.right
-        anchors.leftMargin: 10
+        anchors.bottomMargin: 10
         width: 100
         height: 100
         text: "SAVE"
         onClicked: {
-            CONF.save_user_data()
-            TDG.save()
-            EDG.save()
+            startSave.start()
+            saving_msg.text = "Saving..."
         }
     }
 
 
-    
+    CheckBox {
+        id: cbDelete
+        checked: true
+        text: "Delete result folder"
+        anchors.bottom: btSave.bottom
+        anchors.left: btSave.right
+        anchors.leftMargin: 10
+    }
+
+    Rectangle {
+        width: 60
+        height: 20
+        anchors.top: btSave.top
+        anchors.left: btSave.right
+        anchors.leftMargin: 20
+        anchors.topMargin: 20
+        color: "transparent"
+
+        Text {
+            id: saving_msg
+            anchors.fill: parent
+            color: "white"
+            text: ""
+        }
+    }
+
     Image {
         source: CONF.logo_path
         anchors.bottom: parent.bottom
         anchors.right: parent.right
+        anchors.bottomMargin: 20
+        anchors.rightMargin: 20
     }
+
+    Connections {
+        target: EDG
+        function onSaved_signal() {
+            console.log("Data saved")
+            saving_msg.text = "Done"
+        }
+    }
+
+    Connections {
+        target: TDG
+        function onData_updated_signal() {
+            console.log("Get expenses slot")
+            expenses.get_expense_data()
+        }
+    }
+
+    Connections {
+        target: EDG
+        function onReady_to_save_signal() {
+            console.log("Main - save data")
+            CONF.save_user_data()
+            TDG.save()
+            EDG.save(cbDelete.checked)
+        }
+    }
+
+    Timer {
+       id: startSave
+       interval: 10
+       repeat: false
+       running: false
+       onTriggered: {
+            daySetter.send_setted_days()
+       }
+   }
 }
