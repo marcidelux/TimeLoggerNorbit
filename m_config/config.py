@@ -18,7 +18,6 @@ ZIP_NAME_PATH = "./data_results/{}_{}_{}_{:02d}"
 LOGO_PATH = DATA_SOURCES_PATH + "logo.png"
 LOADING_GIF_PATH = DATA_SOURCES_PATH + "loading2.gif"
 
-
 class Config(QObject):
     def __init__(self) -> None:
         global NWD_FILE_PATH
@@ -41,6 +40,7 @@ class Config(QObject):
     def loading_path(Self):
         global LOADING_GIF_PATH
         return LOADING_GIF_PATH
+
 
     @pyqtProperty(str)
     def first_name(self):
@@ -143,6 +143,10 @@ class Config(QObject):
 
         with open(CONFIG_FILE_PATH, "w") as f:
             json.dump(data, f, indent=4, sort_keys=True)
+    
+    def post_init(self):
+        self.load_non_working_days()
+        self.load_user_data()
 
     def post_init(self):
         self.load_non_working_days()

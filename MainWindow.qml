@@ -57,7 +57,6 @@ ApplicationWindow {
         }
     }
 
-
     CheckBox {
         id: cbDelete
         checked: true
@@ -83,7 +82,7 @@ ApplicationWindow {
             text: ""
         }
     }
-
+    
     Image {
         source: CONF.logo_path
         anchors.bottom: parent.bottom

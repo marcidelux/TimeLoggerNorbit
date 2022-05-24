@@ -30,7 +30,6 @@ Item {
             console.log("Exp modell is empty")
             EXP.get_expenses_slot(expSetter.allData)
         }
-        
     }
 
     function get_all_finished() {
@@ -154,7 +153,6 @@ Item {
         Rectangle { id: shadow_box; color: "black"; width: 700; height: 40;
             anchors.top: lvExp.bottom; anchors.left: lvExp.left; anchors.topMargin: 14
         }
-
     }
 
 
