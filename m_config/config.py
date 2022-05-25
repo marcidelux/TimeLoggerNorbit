@@ -5,7 +5,7 @@ from PyQt6.QtCore import QObject
 from PyQt6.QtCore import pyqtProperty
 from PyQt6.QtCore import pyqtSlot
 
-DATA_RESULTS_PATH = ".data_results"
+DATA_RESULTS_PATH = "./data_results"
 DATA_SOURCES_PATH = "./data_sources/"
 DATA_RESULT_PATH = DATA_RESULTS_PATH + "/{}_{}_{}_{:02d}/"
 EXPENSES_SOURCE_PATH = DATA_SOURCES_PATH + "expenses.xlsx"
