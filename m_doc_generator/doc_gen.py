@@ -81,7 +81,7 @@ class TimeDocGenerator(QObject):
     def set_user_data(self):
         self.ws.title = conf.now.strftime("%Y %b")
         self.ws[NAME_CELL] = f"{conf._last_name} {conf._first_name}"
-        self.ws[DATE_CELL] = conf.now.strftime("%d/%m/%Y")
+        self.ws[DATE_CELL] = conf.now.strftime("%Y %b")
         self.ws[JOB_TYTLE_CELL] = f"{conf._role}"
 
     def set_days(self, days: list = None):
