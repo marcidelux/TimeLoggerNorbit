@@ -26,7 +26,7 @@ day_status = {
     3: {"col": "I", "value": "Fsz"},  # Fizetett szabadság
     4: {"col": "I", "value": "Figt"},  # Fizetett igazolt távollét
     5: {"col": "I", "value": "Áll"},  # Elrendelt fizetett állásidő
-    6: {"col": "H", "value": "1"},  # Külföldi munka
+    6: {"col": "H", "value": 1},  # Külföldi munka
     7: {"col": "J", "value": "Fnsz"},  # Nem fizetett szabadság
     8: {"col": "J", "value": "Nigt"},  # Nem fizetett igazolt távollét
     9: {"col": "J", "value": "H"},  # Igazolatlan hiányzás

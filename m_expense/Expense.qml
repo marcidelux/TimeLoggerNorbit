@@ -199,7 +199,7 @@ Item {
 
     FileDialog {
         id: expFileDialog
-        nameFilters: [ "Invoice (*.pdg *.jpg *.png)", "All files (*)" ]
+        nameFilters: [ "Invoice (*.pdf *.jpg *.png)", "All files (*)" ]
         onAccepted: {
             console.log(expFileDialog.selectedFile)
             selectedPath = expFileDialog.selectedFile.toString()
