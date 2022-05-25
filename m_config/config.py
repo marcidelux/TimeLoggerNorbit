@@ -25,9 +25,9 @@ class Config(QObject):
         self.now = datetime.now()
         NWD_FILE_PATH = NWD_FILE_PATH.format(self.now.year)
         self.num_of_days = monthrange(self.now.year, self.now.month)[1]
-        self._first_name = ""
-        self._last_name = ""
-        self._role = ""
+        self._first_name = "First name"
+        self._last_name = "Last name"
+        self._role = "Role"
         self.holidays = []
         self.working_saturdays = []
 
@@ -124,25 +124,20 @@ class Config(QObject):
                     self.working_saturdays.append(temp_date.day)
 
     def load_user_data(self):
-        with open(CONFIG_FILE_PATH) as f:
-            data = json.load(f)
-            self._first_name = data["user"]["first_name"]
-            self._last_name = data["user"]["last_name"]
-            self._role = data["user"]["role"]
+        try:
+            with open(CONFIG_FILE_PATH) as f:
+                data = json.load(f)
+                self._first_name = data["user"]["first_name"]
+                self._last_name = data["user"]["last_name"]
+                self._role = data["user"]["role"]
+        except FileNotFoundError:
+            pass
 
     @pyqtSlot()
     def save_user_data(self):
         print("Save userdata")
-        data = None
-        with open(CONFIG_FILE_PATH) as f:
-            data = json.load(f)
-
-        data["user"]["first_name"] = self._first_name
-        data["user"]["last_name"] = self._last_name
-        data["user"]["role"] = self._role
-
         with open(CONFIG_FILE_PATH, "w") as f:
-            json.dump(data, f, indent=4, sort_keys=True)
+            json.dump({"user": {"first_name": self._first_name,"last_name": self._last_name,"role": self._role}}, f, indent=4, sort_keys=True)
     
     def post_init(self):
         self.load_non_working_days()

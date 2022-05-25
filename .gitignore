@@ -127,6 +127,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 data_results/
+data_sources/user.json
 
 #XlSX
 test*
