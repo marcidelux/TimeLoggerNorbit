@@ -16,6 +16,7 @@ a = Analysis(
            ('m_expense/*','m_expense'),
            ('m_folder_handler/*','m_folder_handler'),
            ('m_settings/*','m_settings'),
+           ('m_extra_files/*','m_extra_files'),
            ('data_sources/*','data_sources')],
     hiddenimports=[],
     hookspath=[],

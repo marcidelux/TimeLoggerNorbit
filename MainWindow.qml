@@ -4,6 +4,7 @@ import QtQuick.Controls.Universal 6.0
 import "m_day_setter"
 import "m_settings"
 import "m_expense"
+import "m_extra_files"
 
 ApplicationWindow {
     id: mainWindow
@@ -42,10 +43,18 @@ ApplicationWindow {
         anchors.left: userData.right
     }
 
+    ExtraFilesImporter {
+        id: extraFiles
+        anchors.top: expenses.bottom
+        anchors.left: daySetter.right
+        anchors.topMargin: 10
+        anchors.leftMargin: 10
+    }
+    
     Button {
         id: btSave
         anchors.bottom: parent.bottom
-        anchors.left: daySetter.right
+        anchors.left: extraFiles.right
         anchors.leftMargin: 10
         anchors.bottomMargin: 10
         width: 100
@@ -67,6 +76,7 @@ ApplicationWindow {
     }
 
     Rectangle {
+        id: statusText
         width: 60
         height: 20
         anchors.top: btSave.top
@@ -113,6 +123,7 @@ ApplicationWindow {
             console.log("Main - save data")
             CONF.save_user_data()
             TDG.save()
+            extraFiles.get_extra_files_slot()
             EDG.save(cbDelete.checked)
         }
     }

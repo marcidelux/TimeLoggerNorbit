@@ -6,7 +6,7 @@ import QtQuick.Window 6.0
 Item {
     id: expSetter
     width: 700
-    height: 200
+    height: 400
 
     property int cntr: 0
     property var allData : []
@@ -59,8 +59,8 @@ Item {
 
     Rectangle {
         id: contRect
-        width: 700
-        height: 460
+        width: parent.width
+        height: parent.height
         border.width: 2
         border.color: "gray"
         color: "transparent"
@@ -75,7 +75,7 @@ Item {
 
         ListView {id: lvExp;
             width: 700
-            height: 400
+            height: parent.height - 60
             anchors.left: parent.left
             anchors.top: r6.bottom
             anchors.topMargin: 6

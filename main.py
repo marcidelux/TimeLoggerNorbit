@@ -4,11 +4,12 @@ import os
 from PyQt6.QtQml import QQmlApplicationEngine
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import QUrl
+from PyQt6.QtGui import QIcon
 
 from m_calendar.w_day_gen import WorkingDayGenerator
-from m_doc_generator.doc_gen import TimeDocGenerator, ExpensesDocGenerator
+from m_doc_generator.doc_gen import TimeDocGenerator, ExpensesDocGenerator, ExtraFilesSaver
 from m_expense.expenses import ExpensesHandler
-from m_config.config import conf
+from m_config.config import conf, LOGO_PATH
 
 
 application_path = (
@@ -25,6 +26,7 @@ def main():
     edg = ExpensesDocGenerator()
     tdg = TimeDocGenerator()
     exph = ExpensesHandler()
+    efs = ExtraFilesSaver()
 
     # Connect slots between python classes
     exph.send_expenses_signal.connect(edg.receive_expense_data_slot)
@@ -37,8 +39,11 @@ def main():
     # Set the non working days.
     tdg.set_days(wdg.create_days_for_doc())
 
+    os.environ["QT_QUICK_BACKEND"] = "software"
+
     url = QUrl(os.path.join(application_path, "MainWindow.qml"))
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(conf.logo_path));
     engine = QQmlApplicationEngine()
     engine.quit.connect(app.quit)
     engine.rootContext().setContextProperty("WDG", wdg)
@@ -46,6 +51,7 @@ def main():
     engine.rootContext().setContextProperty("CONF", conf)
     engine.rootContext().setContextProperty("EXP", exph)
     engine.rootContext().setContextProperty("EDG", edg)
+    engine.rootContext().setContextProperty("EFS", efs)
     engine.load(url)
 
     # Send the working days to QML side.

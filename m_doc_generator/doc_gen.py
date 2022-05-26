@@ -162,7 +162,6 @@ class ExpensesDocGenerator(QObject):
     exp_exc_rate_c = "M"
 
     def __init__(self, parent=None) -> None:
-
         super().__init__(parent=parent)
         self.wb = Workbook()
         self.ws = None
@@ -241,6 +240,15 @@ class ExpensesDocGenerator(QObject):
         if del_res:
             FolderHandler.delete_result_folder()
         self.saved_signal.emit()
+
+
+class ExtraFilesSaver(QObject):
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent=parent)
+
+    @pyqtSlot(list)
+    def copy_extra_files(self, extra_files: list):
+        FolderHandler.copy_extra_files(extra_files)
 
 def test():
     expenses = ExpensesDocGenerator()
