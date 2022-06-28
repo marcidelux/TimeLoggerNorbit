@@ -143,10 +143,6 @@ class Config(QObject):
         self.load_non_working_days()
         self.load_user_data()
 
-    def post_init(self):
-        self.load_non_working_days()
-        self.load_user_data()
-
 
 conf = Config()
 conf.post_init()

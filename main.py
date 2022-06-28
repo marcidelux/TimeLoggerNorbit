@@ -33,7 +33,7 @@ def main():
 
     # Loads all necesary information.
     wdg.setup()
-    tdg.setup()
+    tdg.setup(wdg.get_num_of_wds())
     edg.setup()
 
     # Set the non working days.

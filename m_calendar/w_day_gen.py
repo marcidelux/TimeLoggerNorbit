@@ -65,6 +65,9 @@ class WorkingDayGenerator(QObject):
         for wd in self.working_days:
             send_list.append([wd["idx"], wd["name"]])
         self.signal_working_days.emit(send_list)
+    
+    def get_num_of_wds(self) -> int:
+        return len(self.working_days)
 
     # After the init, call this function, it calls the creation functions in good order
     def setup(self):

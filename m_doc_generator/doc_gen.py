@@ -44,6 +44,10 @@ class TimeDocGenerator(QObject):
         super().__init__(parent=parent)
         self.wb = Workbook()
         self.ws = None
+        self.num_of_wds = 0
+    
+    def set_num_of_wds(self, wds:int) -> None:
+        self.num_of_wds = wds
 
     def load(self, path: str = None):
         try:
@@ -69,7 +73,7 @@ class TimeDocGenerator(QObject):
         self.ws[f"E{42-num_to_del}"] = f"=SUM(H10:H{end_of_days_cell})"
         self.ws[
             f"B{43-num_to_del}"
-        ] = f'=SUBSTITUTE(SUBSTITUTE(SUBSTITUTE("Össz.kötelező munkanap: $1 nap, $2 fiz.ü.nap. (telj.munkaidő össz.óra: $3 óra)", "$1", COUNT(C10:C{end_of_days_cell})), "$2", E50), "$3", COUNT(C10:C{end_of_days_cell}) * 8)'
+        ] = f'=SUBSTITUTE(SUBSTITUTE(SUBSTITUTE("Össz.kötelező munkanap: $1 nap, $2 fiz.ü.nap. (telj.munkaidő össz.óra: $3 óra)", "$1",  {self.num_of_wds}), "$2", E{50-num_to_del}), "$3", {self.num_of_wds} * 8)'
         self.ws[f"E{50-num_to_del}"] = f'=COUNTIF(I10:I{end_of_days_cell}, "Fü")'
         self.ws[f"E{51-num_to_del}"] = f'=COUNTIF(I10:I{end_of_days_cell}, "Fsz")'
         self.ws[f"E{52-num_to_del}"] = f'=COUNTIF(I10:I{end_of_days_cell}, "Figt")'
@@ -92,9 +96,12 @@ class TimeDocGenerator(QObject):
             # First clear the previusly set data from rows
             for col in range(8, 12):
                 self.ws.cell(row, col).value = ""
-
             if status_idx == 1:
                 continue
+            
+            if status_idx > 1 and status_idx < 10 and status_idx != 6:
+                self.del_data_row(row)
+
             if status_idx == 11:
                 self.del_data_and_color_row(row)
                 # print("Color to grey, remove fields, its weekend")
@@ -108,6 +115,10 @@ class TimeDocGenerator(QObject):
             self.ws[status_cell] = value
 
         self.data_updated_signal.emit()
+    
+    def del_data_row(self, row):
+        for col in range(3, 7):
+            self.ws.cell(row, col).value = ""
 
     def del_data_and_color_row(self, row):
         my_gray = Color(rgb="00808080")
@@ -118,8 +129,9 @@ class TimeDocGenerator(QObject):
             self.ws.cell(row, col).fill = my_fill
 
     # Loads the Excel templte, sets the user data.
-    def setup(self):
+    def setup(self, wds:int):
         self.load()
+        self.set_num_of_wds(wds)
         self.delete_extra_days()
         self.set_user_data()  # Todo move this to the end.
 
