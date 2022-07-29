@@ -62,6 +62,7 @@ class TimeDocGenerator(QObject):
     def delete_extra_days(self):
         print(f"Call extra days delete, num of days: {conf.num_of_days}")
         if conf.num_of_days == 31:
+            self.ws["B43"] = f"Össz.kötelező munkanap: {self.num_of_wds} nap, {len(conf.holidays)} fiz.ü.nap. (telj.munkaidő össz.óra: {self.num_of_wds * 8} óra)"
             return
         num_to_del = 31 - conf.num_of_days
         end_of_days_cell = 40 - num_to_del
@@ -73,7 +74,7 @@ class TimeDocGenerator(QObject):
         self.ws[f"E{42-num_to_del}"] = f"=SUM(H10:H{end_of_days_cell})"
         self.ws[
             f"B{43-num_to_del}"
-        ] = f'=SUBSTITUTE(SUBSTITUTE(SUBSTITUTE("Össz.kötelező munkanap: $1 nap, $2 fiz.ü.nap. (telj.munkaidő össz.óra: $3 óra)", "$1",  {self.num_of_wds}), "$2", E{50-num_to_del}), "$3", {self.num_of_wds} * 8)'
+        ] = f"Össz.kötelező munkanap: {self.num_of_wds} nap, {len(conf.holidays)} fiz.ü.nap. (telj.munkaidő össz.óra: {self.num_of_wds * 8} óra)"
         self.ws[f"E{50-num_to_del}"] = f'=COUNTIF(I10:I{end_of_days_cell}, "Fü")'
         self.ws[f"E{51-num_to_del}"] = f'=COUNTIF(I10:I{end_of_days_cell}, "Fsz")'
         self.ws[f"E{52-num_to_del}"] = f'=COUNTIF(I10:I{end_of_days_cell}, "Figt")'
